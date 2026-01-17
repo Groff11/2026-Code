@@ -84,7 +84,7 @@ public class RobotContainer {
     // Pass the name of your Limelight (e.g., "limelight")
   double[] cameraSpacePose = LimelightHelpers.getTargetPose_CameraSpace("limelight");
   double targetYaw = cameraSpacePose[5];
-  System.out.println(targetYaw);
+
 
 
     // tx ranges from (-hfov/2) to (hfov/2) in degrees. If your target is on the rightmost edge of 

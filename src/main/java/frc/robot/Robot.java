@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
@@ -70,6 +71,10 @@ public class Robot extends TimedRobot
   public void robotPeriodic()
   
   {
+      double[] cameraSpacePose = LimelightHelpers.getTargetPose_CameraSpace("limelight");
+  double targetYaw = cameraSpacePose[4];
+  System.out.println(targetYaw);
+  SmartDashboard.putString("TargetYaw", Double.toString(targetYaw));
     // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
     // commands, running already-scheduled commands, removing finished or interrupted commands,
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
