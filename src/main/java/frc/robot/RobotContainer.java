@@ -79,11 +79,18 @@ public class RobotContainer {
     // if it is too high, the robot will oscillate.
     // if it is too low, the robot will never reach its target
     // if the robot never turns in the correct direction, kP should be inverted.
-    double kP = -.035;
+    double kP = -.03;
+
+    // Pass the name of your Limelight (e.g., "limelight")
+  double[] cameraSpacePose = LimelightHelpers.getTargetPose_CameraSpace("limelight");
+  double targetYaw = cameraSpacePose[5];
+  System.out.println(targetYaw);
+
 
     // tx ranges from (-hfov/2) to (hfov/2) in degrees. If your target is on the rightmost edge of 
     // your limelight 3 feed, tx should return roughly 31 degrees.
-    double targetingAngularVelocity = LimelightHelpers.getTX("limelight") * kP;
+    //double targetingAngularVelocity = LimelightHelpers.getTX("limelight") * kP;
+    double targetingAngularVelocity = targetYaw * kP;
 
     // convert to radians per second for our drive method
     targetingAngularVelocity *= Constants.LimelightConstants.kMaxAngularSpeed;
@@ -98,7 +105,7 @@ public class RobotContainer {
   // this works best if your Limelight's mount height and target mount height are different.
   // if your limelight and target are mounted at the same or similar heights, use "ta" (area) for target ranging rather than "ty"
   double limelight_range_proportional() {    
-    double kP = -.2;
+    double kP = -.00;
     double targetingForwardSpeed = LimelightHelpers.getTY("limelight") * kP;
     targetingForwardSpeed *= Constants.LimelightConstants.kMaxSpeed;
     targetingForwardSpeed *= -1.0;
@@ -107,7 +114,7 @@ public class RobotContainer {
 
 
   double limelight_strafe_proportional() {
-    double kP = 0.03; // tune this
+    double kP = -0.00; // tune this
     double tx = LimelightHelpers.getTX("limelight");
     double strafeSpeed = tx * kP;
     strafeSpeed *= Constants.LimelightConstants.kMaxSpeed;
