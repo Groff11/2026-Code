@@ -6,6 +6,8 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -48,6 +50,8 @@ public class RobotContainer {
   private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
       "swerve/neo"));
 
+  PIDController pidController = new PIDController(0.4, 0, 0.01);
+
   // Establish a Sendable Chooser that will be able to be sent to the
   // SmartDashboard, allowing selection of desired auto
   private final SendableChooser<Command> autoChooser;
@@ -79,24 +83,25 @@ public class RobotContainer {
     // if it is too high, the robot will oscillate.
     // if it is too low, the robot will never reach its target
     // if the robot never turns in the correct direction, kP should be inverted.
-    double kP = -.03;
+    double kP = -.005;
 
     // Pass the name of your Limelight (e.g., "limelight")
   double[] cameraSpacePose = LimelightHelpers.getTargetPose_CameraSpace("limelight");
-  double targetYaw = cameraSpacePose[5];
-
-
+  double targetYaw = cameraSpacePose[4];
 
     // tx ranges from (-hfov/2) to (hfov/2) in degrees. If your target is on the rightmost edge of 
     // your limelight 3 feed, tx should return roughly 31 degrees.
     //double targetingAngularVelocity = LimelightHelpers.getTX("limelight") * kP;
-    double targetingAngularVelocity = targetYaw * kP;
+    // double targetingAngularVelocity = targetYaw * kP;
 
-    // convert to radians per second for our drive method
-    targetingAngularVelocity *= Constants.LimelightConstants.kMaxAngularSpeed;
 
-    //invert since tx is positive when the target is to the right of the crosshair
-    targetingAngularVelocity *= -1.0;
+    // // convert to radians per second for our drive method
+    // targetingAngularVelocity *= Constants.LimelightConstants.kMaxAngularSpeed;
+
+    // //invert since tx is positive when the target is to the right of the crosshair
+    // targetingAngularVelocity *= -1.0;
+
+    double targetingAngularVelocity = pidController.calculate(targetYaw, 0) * -0.05;
 
     return targetingAngularVelocity;
   }
@@ -105,20 +110,24 @@ public class RobotContainer {
   // this works best if your Limelight's mount height and target mount height are different.
   // if your limelight and target are mounted at the same or similar heights, use "ta" (area) for target ranging rather than "ty"
   double limelight_range_proportional() {    
-    double kP = -.00;
-    double targetingForwardSpeed = LimelightHelpers.getTY("limelight") * kP;
-    targetingForwardSpeed *= Constants.LimelightConstants.kMaxSpeed;
-    targetingForwardSpeed *= -1.0;
+    // double kP = -.03;
+    // double targetingForwardSpeed = LimelightHelpers.getTY("limelight") * kP;
+    // targetingForwardSpeed *= Constants.LimelightConstants.kMaxSpeed;
+    // targetingForwardSpeed *= -1.0;
+    double targetingForwardSpeed = pidController.calculate(LimelightHelpers.getTY("limelight"), 0) * -0.02;
     return targetingForwardSpeed;
   }
 
 
   double limelight_strafe_proportional() {
-    double kP = -0.00; // tune this
-    double tx = LimelightHelpers.getTX("limelight");
-    double strafeSpeed = tx * kP;
-    strafeSpeed *= Constants.LimelightConstants.kMaxSpeed;
-    strafeSpeed *= -1.0;
+    // double kP = -0.01; // tune this
+    // double tx = LimelightHelpers.getTX("limelight");
+    // double strafeSpeed = tx * kP;
+    // strafeSpeed *= Constants.LimelightConstants.kMaxSpeed;
+    // strafeSpeed *= -1.0;
+
+    double strafeSpeed = pidController.calculate(LimelightHelpers.getTX("limelight"), 0) * -0.02;
+
     return strafeSpeed;
   }
   
